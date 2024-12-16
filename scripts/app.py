@@ -2,13 +2,13 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import pickle
 import pandas as pd
-
+import mlflow
 app = FastAPI()
 
 columns = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age']
 dict_res = {0: 'Not-Diabetes', 1: 'Diabetes'}
 
-pipeline_path = 'models/pipeline.pkl'
+pipeline_path = '/app/models/pipeline.pkl'
 with open(pipeline_path, 'rb') as pipeline_file:
     pipeline = pickle.load(pipeline_file)
 
@@ -27,6 +27,10 @@ async def predict(input_data: DataInput):
     except Exception as e:
         print("Error:", str(e))
         raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Diabetes MLOps app!"}
 
 if __name__ == "__main__":
     import uvicorn

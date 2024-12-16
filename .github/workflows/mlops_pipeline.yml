@@ -23,6 +23,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install mlflow  # Installer MLflow
 
     - name: Run data drift detection
       run: |
@@ -45,6 +46,13 @@ jobs:
       if: env.drift == 'true'
       run: |
         python scripts/train_model.py
+
+    - name: Log model training to MLflow
+      if: env.drift == 'true'
+      run: |
+        python -m mlflow.log_artifact "models/pipeline.pkl"  # Loguer le modèle après l'entraînement
+        python -m mlflow.log_param("drift_detected", "true")  # Loguer la détection de dérive
+        python -m mlflow.log_metric("model_accuracy", 0.95)  # Exemple : Loguer une métrique (remplacez par la vraie précision du modèle)
 
     - name: Commit and push updated model
       if: env.drift == 'true'
