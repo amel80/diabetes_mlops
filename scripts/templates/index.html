@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diabetes Prediction</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script>
         async function submitForm(event) {
             event.preventDefault();  // Empêche la soumission classique du formulaire
@@ -50,38 +56,67 @@
     </script>
 </head>
 <body>
-    <h1>Welcome to the Diabetes Prediction App</h1>
-    <p>Enter patient data below to make a prediction:</p>
+    
+    <div class="navbar navbar-expand-md navbar-dark ">
+        <div class="container">
+            <a class="navbar-brand" href="">D2P</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+        </div>
+         <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="">Predict</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="">Description</a>
+                    </li>
+                </ul>
+         </div>
+        
+           
+            <h1>Welcome to the Diabetes Prediction Project</h1>
+            
+    </div>
+    <div class="grandDiv">
+          <div class="login">
+             <div class="image0">
+              <img src="" alt="Your Image">
+                 <h1>Diabetes Predictor</h1>
+          </div>
+        
+            <form id="predictionForm" onsubmit="submitForm(event)">
+               
+                <input type="number" name="Pregnancies" placeholder="Pregnancies" required><br>
+        
+                
+                <input type="number" name="Glucose" placeholder="Glucose" required><br>
+        
+                
+                <input type="number" name="BloodPressure" placeholder="BloodPressure" required><br>
+        
+                
+                <input type="number" name="SkinThickness" placeholder="SkinThickness" required><br>
+        
+              
+                <input type="number" name="Insulin" placeholder="Insulin" required><br>
+        
+                
+                <input type="number" name="BMI" placeholder="BMI" required><br>
+        
+                
+                <input type="number" name="DiabetesPedigreeFunction" placeholder="DiabetesPedigreeFunction"  required><br>
+        
+               
+                <input type="number" name="Age" placeholder="Age" required><br>
+        
+                <button type="submit">Make Prediction</button>
+            </form>
 
-    <form id="predictionForm" onsubmit="submitForm(event)">
-        <label for="Pregnancies">Pregnancies:</label>
-        <input type="number" name="Pregnancies" required><br>
-
-        <label for="Glucose">Glucose:</label>
-        <input type="number" name="Glucose" required><br>
-
-        <label for="BloodPressure">BloodPressure:</label>
-        <input type="number" name="BloodPressure" required><br>
-
-        <label for="SkinThickness">SkinThickness:</label>
-        <input type="number" name="SkinThickness" required><br>
-
-        <label for="Insulin">Insulin:</label>
-        <input type="number" name="Insulin" required><br>
-
-        <label for="BMI">BMI:</label>
-        <input type="number" name="BMI" required><br>
-
-        <label for="DiabetesPedigreeFunction">DiabetesPedigreeFunction:</label>
-        <input type="number" name="DiabetesPedigreeFunction" required><br>
-
-        <label for="Age">Age:</label>
-        <input type="number" name="Age" required><br>
-
-        <button type="submit">Make Prediction</button>
-    </form>
-
-    <div id="predictionResult"></div>  <!-- Affichage du résultat de la prédiction -->
+                <div id="predictionResult"></div>  <!-- Affichage du résultat de la prédiction -->
+   </div>
 
 </body>
 </html>
