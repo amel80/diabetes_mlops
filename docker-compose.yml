@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   app:
@@ -6,8 +5,21 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8001:8000"
+      - "8000:8000"
     volumes:
       - ./models:/app/models
     environment:
       - PYTHONUNBUFFERED=1
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.19.0  # Utilise la dernière version de MLflow
+    ports:
+      - "5000:5000"
+    environment:
+      - MLFLOW_SERVER_DEFAULT_ARTIFACT_ROOT=/mlflow_artifacts
+    volumes:
+      - ./mlflow_artifacts:/mlflow_artifacts
+    command: mlflow server --host 0.0.0.0 --port 5000

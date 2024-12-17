@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import pickle
 import pandas as pd
 import mlflow
+from fastapi.responses import HTMLResponse
 app = FastAPI()
 
 columns = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age']
