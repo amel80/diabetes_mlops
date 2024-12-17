@@ -4,13 +4,15 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
-import pickle
 from sklearn.metrics import accuracy_score, precision_score, f1_score
-
+import pickle
 import mlflow
 import mlflow.sklearn
 from datetime import datetime
+from sklearn.model_selection import train_test_split
 
+
+print(mlflow.get_tracking_uri())
 # Définir l'URL de suivi MLflow
 mlflow.set_tracking_uri("https://opulent-space-tribble-v6rv7qrp9g9vcp994-5000.app.github.dev/#/experiments/0?searchFilter=&orderByKey=attributes.start_time&orderByAsc=false&startTime=ALL&lifecycleFilter=Active&modelVersionFilter=All+Runs&datasetsFilter=W10%3D")
 
@@ -56,40 +58,48 @@ pipeline = Pipeline(steps=[
     ('preprocessor', preprocessor),
     ('classifier', RandomForestClassifier(random_state=42))
 ])
-# Démarrer une nouvelle expérimentation MLflow
+# Démarrer une exécution MLflow
+with mlflow.start_run() as run:
+    run_id = run.info.run_id
+    print("Run ID:", run_id)
+    
+    # Log des paramètres
+    mlflow.log_param("model_type", "RandomForest")
+    mlflow.log_param("data_source", "reference_data + new_data")
+    
+    # Entraînement du modèle
+    pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
+    
+    # Calcul et log des métriques
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    
+    mlflow.log_metric("accuracy", accuracy)
+    mlflow.log_metric("precision", precision)
+    mlflow.log_metric("f1_score", f1)
+    
+    # Enregistrement du modèle
+    mlflow.sklearn.log_model(pipeline, "model")
+    print("Modèle entraîné et logué dans MLflow.")
 
-mlflow.start_run()
-run_id = mlflow.active_run().info.run_id
-print("Run ID:", run_id)
-
-# Loguer des paramètres et des métriques
-mlflow.log_param("model_type", "RandomForest")
-mlflow.log_param("data_source", "reference_data + new_data")
-# Entraîner le modèle
-
-pipeline.fit(X_train, y_train)
-# Prédictions sur l'ensemble de test
-y_pred = pipeline.predict(X_test)
-
-# Calculer les métriques
-accuracy = accuracy_score(y_test, y_pred)
-precision = precision_score(y_test, y_pred)
-f1 = f1_score(y_test, y_pred)
-
-# Loguer les métriques dans MLflow
-mlflow.log_metric("accuracy", accuracy)
-mlflow.log_metric("precision", precision)
-mlflow.log_metric("f1_score", f1)
-
-# Enregistrer le modèle avec MLflow
-mlflow.sklearn.log_model(pipeline, "model")
-
-# Sauvegarder le modèle localement avec pickle (facultatif si vous voulez aussi un fichier pickle)
-
+# Sauvegarde du modèle localement avec Pickle
 with open('models/pipeline.pkl', 'wb') as f:
     pickle.dump(pipeline, f)
+print("Modèle sauvegardé localement sous 'models/pipeline.pkl'.")
 
-# Terminer l'exécution de MLflow
-mlflow.end_run()
+# Sélectionner le meilleur modèle basé sur le F1-score
+experiment_id = mlflow.get_experiment_by_name(experiment_name).experiment_id
+runs = mlflow.search_runs(experiment_ids=[experiment_id])
 
-print("Model training and logging completed.")
+best_run = runs.loc[runs['metrics.f1_score'].idxmax()]
+best_model_uri = f"runs:/{best_run.run_id}/model"
+best_model = mlflow.sklearn.load_model(best_model_uri)
+
+# Prédictions avec le meilleur modèle
+y_pred_best_model = best_model.predict(X_test)
+print(f"Meilleur modèle (Run ID: {best_run.run_id}) chargé pour les prédictions futures.")
+
+# Résultat final
+print("Pipeline MLflow terminé avec succès.")

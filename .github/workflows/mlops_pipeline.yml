@@ -3,7 +3,7 @@ name: Diabetes Retraining Pipeline with Data Drift Detection
 on:
   push:
     paths:
-      - 'data/new_data.csv'
+      - 'data/new_data.csv'  # Déclenche le workflow lorsqu'un nouveau fichier de données est ajouté
 permissions:
   contents: write
 jobs:
